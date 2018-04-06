@@ -4,6 +4,7 @@ import (
 	"github.com/etcd-manager/etcd-discovery/apis/discovery"
 	"github.com/etcd-manager/etcd-discovery/apis/discovery/install"
 	"github.com/etcd-manager/etcd-discovery/apis/discovery/v1alpha1"
+	"github.com/etcd-manager/etcd-discovery/pkg/controller"
 	jcstorage "github.com/etcd-manager/etcd-discovery/pkg/registry/discovery/joincluster"
 	pingstorage "github.com/etcd-manager/etcd-discovery/pkg/registry/discovery/ping"
 	"k8s.io/apimachinery/pkg/apimachinery/announced"
@@ -42,23 +43,25 @@ func init() {
 	)
 }
 
-type ExtraConfig struct {
-	// Place you custom config here.
-}
-
 type Config struct {
 	GenericConfig *genericapiserver.RecommendedConfig
-	ExtraConfig   ExtraConfig
+	ExtraConfig   *controller.EtcdConfig
 }
 
 // DiscoveryServer contains state for a Kubernetes cluster master/api server.
 type DiscoveryServer struct {
 	GenericAPIServer *genericapiserver.GenericAPIServer
+	Controller       *controller.EtcdController
+}
+
+func (op *DiscoveryServer) Run(stopCh <-chan struct{}) error {
+	go op.Controller.Run(stopCh)
+	return op.GenericAPIServer.PrepareRun().Run(stopCh)
 }
 
 type completedConfig struct {
 	GenericConfig genericapiserver.CompletedConfig
-	ExtraConfig   *ExtraConfig
+	ExtraConfig   *controller.EtcdConfig
 }
 
 type CompletedConfig struct {
@@ -70,7 +73,7 @@ type CompletedConfig struct {
 func (cfg *Config) Complete() CompletedConfig {
 	c := completedConfig{
 		cfg.GenericConfig.Complete(),
-		&cfg.ExtraConfig,
+		cfg.ExtraConfig,
 	}
 
 	c.GenericConfig.Version = &version.Info{

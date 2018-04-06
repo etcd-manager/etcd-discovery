@@ -28,14 +28,19 @@ etcd-discovery run [flags]
       --audit-webhook-config-file string                  Path to a kubeconfig formatted file that defines the audit webhook configuration. Requires the 'AdvancedAuditing' feature gate.
       --audit-webhook-mode string                         Strategy for sending audit events. Blocking indicates sending events should block server responses. Batch causes the webhook to buffer and send events asynchronously. Known modes are batch,blocking. (default "batch")
       --authentication-token-webhook-cache-ttl duration   The duration to cache responses from the webhook token authenticator. (default 10s)
+      --backup-store string                               Backup store location
       --bind-address ip                                   The IP address on which to listen for the --secure-port port. The associated interface(s) must be reachable by the rest of the cluster, and by CLI/web clients. If blank, all interfaces will be used (0.0.0.0). (default 0.0.0.0)
       --cert-dir string                                   The directory where the TLS certs are located. If --tls-cert-file and --tls-private-key-file are provided, this flag will be ignored. (default "apiserver.local.config/certificates")
       --contention-profiling                              Enable lock contention profiling, if profiling is enabled
       --enable-swagger-ui                                 Enables swagger ui on the apiserver at /swagger-ui
+      --etcd-cluster-name string                          Name of cluster
+      --etcd-cluster-size int                             Size of cluster size
   -h, --help                                              help for run
+      --initial-cluster stringToString                    Initial cluster configuration (default [])
+      --initial-cluster-state ClusterState                Initial cluster state (default New)
       --peer-trusted-ca-file string                       If set, any request presenting a client certificate signed by one of the authorities in the peer-trusted-ca-file is authenticated with an identity corresponding to the CommonName of the client certificate.
       --profiling                                         Enable profiling via web interface host:port/debug/pprof/ (default true)
-      --secure-port int                                   The port on which to serve HTTPS with authentication and authorization. If 0, don't serve HTTPS at all. (default 8443)
+      --secure-port int                                   The port on which to serve HTTPS with authentication and authorization. If 0, don't serve HTTPS at all. (default 2381)
       --tls-ca-file string                                If set, this certificate authority will used for secure access from Admission Controllers. This must be a valid PEM-encoded CA bundle. Altneratively, the certificate authority can be appended to the certificate provided by --tls-cert-file.
       --tls-cert-file string                              File containing the default x509 Certificate for HTTPS. (CA cert, if any, concatenated after server cert). If HTTPS serving is enabled, and --tls-cert-file and --tls-private-key-file are not provided, a self-signed certificate and key are generated for the public address and saved to the directory specified by --cert-dir.
       --tls-private-key-file string                       File containing the default x509 private key matching --tls-cert-file.

@@ -1,8 +1,8 @@
 package options
 
 import (
+	"github.com/etcd-manager/etcd-discovery/pkg/server"
 	"github.com/spf13/pflag"
-	"k8s.io/apiserver/pkg/server"
 	genericoptions "k8s.io/apiserver/pkg/server/options"
 )
 
@@ -10,6 +10,7 @@ import (
 // If you add something to this list, it should be in a logical grouping.
 // Each of them can be nil to leave the feature unconfigured on ApplyTo.
 type RecommendedOptions struct {
+	Etcd           *EtcdOptions
 	SecureServing  *genericoptions.SecureServingOptions
 	Authentication *DelegatingAuthenticationOptions
 	Audit          *genericoptions.AuditOptions
@@ -18,6 +19,7 @@ type RecommendedOptions struct {
 
 func NewRecommendedOptions() *RecommendedOptions {
 	return &RecommendedOptions{
+		Etcd:           NewEtcdOptions(),
 		SecureServing:  genericoptions.NewSecureServingOptions(),
 		Authentication: NewDelegatingAuthenticationOptions(),
 		Audit:          genericoptions.NewAuditOptions(),
@@ -26,23 +28,27 @@ func NewRecommendedOptions() *RecommendedOptions {
 }
 
 func (o *RecommendedOptions) AddFlags(fs *pflag.FlagSet) {
+	o.Etcd.AddFlags(fs)
 	o.SecureServing.AddFlags(fs)
 	o.Authentication.AddFlags(fs)
 	o.Audit.AddFlags(fs)
 	o.Features.AddFlags(fs)
 }
 
-func (o *RecommendedOptions) ApplyTo(config *server.RecommendedConfig) error {
-	if err := o.SecureServing.ApplyTo(&config.Config); err != nil {
+func (o *RecommendedOptions) ApplyTo(config *server.Config) error {
+	if err := o.Etcd.ApplyTo(config.ExtraConfig); err != nil {
 		return err
 	}
-	if err := o.Authentication.ApplyTo(&config.Config); err != nil {
+	if err := o.SecureServing.ApplyTo(&config.GenericConfig.Config); err != nil {
 		return err
 	}
-	if err := o.Audit.ApplyTo(&config.Config); err != nil {
+	if err := o.Authentication.ApplyTo(&config.GenericConfig.Config); err != nil {
 		return err
 	}
-	if err := o.Features.ApplyTo(&config.Config); err != nil {
+	if err := o.Audit.ApplyTo(&config.GenericConfig.Config); err != nil {
+		return err
+	}
+	if err := o.Features.ApplyTo(&config.GenericConfig.Config); err != nil {
 		return err
 	}
 	return nil

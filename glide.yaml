@@ -5,6 +5,7 @@ import:
 - package: github.com/spf13/cobra
   version: master
 - package: github.com/spf13/pflag
+  repo: https://github.com/appscode/pflag.git
   version: master
 - package: k8s.io/api
   version: kubernetes-1.9.0
@@ -26,3 +27,7 @@ import:
   version: v2.1.1
 - package: github.com/coreos/etcd
   version: v3.2.12
+- package: google.golang.org/grpc
+  version: v1.7.5
+- package: github.com/grpc-ecosystem/grpc-gateway
+  version: v1.3.0

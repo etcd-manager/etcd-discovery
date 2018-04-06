@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 
+	"github.com/etcd-manager/etcd-discovery/pkg/controller"
 	"github.com/etcd-manager/etcd-discovery/pkg/server"
 	genericoptions "github.com/etcd-manager/etcd-discovery/pkg/server/options"
 	"github.com/spf13/pflag"
@@ -24,7 +25,7 @@ func NewDiscoveryServerOptions(out, errOut io.Writer) *DiscoveryServerOptions {
 		StdOut:             out,
 		StdErr:             errOut,
 	}
-	o.RecommendedOptions.SecureServing.BindPort = 8443
+	o.RecommendedOptions.SecureServing.BindPort = 2381
 	return o
 }
 
@@ -48,14 +49,12 @@ func (o DiscoveryServerOptions) Config() (*server.Config, error) {
 		return nil, fmt.Errorf("error creating self-signed certificates: %v", err)
 	}
 
-	serverConfig := genericapiserver.NewRecommendedConfig(server.Codecs)
-	if err := o.RecommendedOptions.ApplyTo(serverConfig); err != nil {
-		return nil, err
-	}
-
 	config := &server.Config{
-		GenericConfig: serverConfig,
-		ExtraConfig:   server.ExtraConfig{},
+		GenericConfig: genericapiserver.NewRecommendedConfig(server.Codecs),
+		ExtraConfig:   &controller.EtcdConfig{},
+	}
+	if err := o.RecommendedOptions.ApplyTo(config); err != nil {
+		return nil, err
 	}
 	return config, nil
 }
