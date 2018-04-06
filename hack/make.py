@@ -33,23 +33,20 @@ import os
 import os.path
 import subprocess
 import sys
-import time
-import yaml
 from os.path import expandvars, join, dirname
 
-libbuild.REPO_ROOT = libbuild.GOPATH + '/src/github.com/etcd-manager/etcd-discovery'
+libbuild.REPO_ROOT = expandvars('$GOPATH') + '/src/github.com/etcd-manager/etcd-discovery'
 BUILD_METADATA = libbuild.metadata(libbuild.REPO_ROOT)
 libbuild.BIN_MATRIX = {
     'etcd-discovery': {
         'type': 'go',
         'go_version': True,
-        'release': True,
+        'use_cgo': False,
         'distro': {
-            'linux': ['amd64']
+            'alpine': ['amd64']
         }
     }
 }
-
 libbuild.BUCKET_MATRIX = {
     'prod': 'gs://appscode-cdn',
     'dev': 'gs://appscode-dev'
@@ -78,32 +75,37 @@ def version():
 
 
 def fmt():
-    libbuild.ungroup_go_imports('*.go', 'cmds')
-    die(call('goimports -w *.go cmds'))
-    call('gofmt -s -w *.go cmds')
+    libbuild.ungroup_go_imports('*.go', 'apis', 'client', 'pkg')
+    die(call('goimports -w *.go apis client pkg'))
+    call('gofmt -s -w *.go apis client pkg')
 
 
 def vet():
-    call('go vet *.go ./...')
+    call('go vet *.go ./apis/... ./client/... ./pkg/...')
 
 
 def lint():
-    call('golint *.go ./...')
+    call('golint *.go')
+    call('golint ./apis/...')
+    call('golint ./client/...')
+    call('golint ./pkg/...')
 
 
 def gen():
-    call('go vet ./...')
+    return
 
 
 def build_cmd(name):
     cfg = libbuild.BIN_MATRIX[name]
+    entrypoint='*.go'
+    compress = libbuild.ENV in ['prod']
     if cfg['type'] == 'go':
         if 'distro' in cfg:
             for goos, archs in cfg['distro'].items():
                 for goarch in archs:
-                    libbuild.go_build(name, goos, goarch, main='*.go')
+                    libbuild.go_build(name, goos, goarch, entrypoint, compress)
         else:
-            libbuild.go_build(name, libbuild.GOHOSTOS, libbuild.GOHOSTARCH, main='*.go')
+            libbuild.go_build(name, libbuild.GOHOSTOS, libbuild.GOHOSTARCH, entrypoint, compress)
 
 
 def build_cmds():
@@ -122,14 +124,6 @@ def build(name=None):
         build_cmds()
 
 
-def push_bin(bindir):
-    call('rm -f *.md5', cwd=bindir)
-    call('rm -f *.sha1', cwd=bindir)
-    for f in os.listdir(bindir):
-        if os.path.isfile(bindir + '/' + f):
-            libbuild.upload_to_cloud(bindir, f, BUILD_METADATA['version'])
-
-
 def push(name=None):
     if name:
         bindir = libbuild.REPO_ROOT + '/dist/' + name
@@ -142,35 +136,36 @@ def push(name=None):
                 push_bin(d)
 
 
-def update_registry():
-    vf = libbuild.REPO_ROOT + '/dist/etcd-discovery/versions.json'
-    bucket = libbuild.BUCKET_MATRIX.get(libbuild.ENV, libbuild.BUCKET_MATRIX['dev'])
-    call('gsutil cp {0}/binaries/etcd-discovery/versions.json {1}'.format(bucket, vf))
-    vj = {}
-    if os.path.isfile(vf):
-        vj = libbuild.read_json(vf)
-    vj[BUILD_METADATA['version']] = {
-        'changesets': [],
-        'release_date': int(time.time())
-    }
-    libbuild.write_json(vj, vf)
-    call("gsutil cp {1} {0}/binaries/etcd-discovery/versions.json".format(bucket, vf))
-    call('gsutil acl ch -u AllUsers:R -r {0}/binaries/etcd-discovery/versions.json'.format(bucket))
+def push_bin(bindir):
+    call('rm -f *.md5', cwd=bindir)
+    call('rm -f *.sha1', cwd=bindir)
+    for f in os.listdir(bindir):
+        if os.path.isfile(bindir + '/' + f):
+            libbuild.upload_to_cloud(bindir, f, BUILD_METADATA['version'])
 
-    lf = libbuild.REPO_ROOT + '/dist/etcd-discovery/latest.txt'
-    libbuild.write_file(lf, BUILD_METADATA['version'])
-    call("gsutil cp {1} {0}/binaries/etcd-discovery/latest.txt".format(bucket, lf))
-    call('gsutil acl ch -u AllUsers:R -r {0}/binaries/etcd-discovery/latest.txt'.format(bucket))
+
+def update_registry():
+    libbuild.update_registry(BUILD_METADATA['version'])
 
 
 def install():
-    die(call('GO15VENDOREXPERIMENT=1 ' + libbuild.GOC + ' install ./...'))
+    die(call('GO15VENDOREXPERIMENT=1 ' + libbuild.GOC + ' install .'))
 
 
 def default():
     gen()
     fmt()
     die(call('GO15VENDOREXPERIMENT=1 ' + libbuild.GOC + ' install .'))
+
+
+def test(type, *args):
+    pydotenv.load_dotenv(join(libbuild.REPO_ROOT, 'hack/config/.env'))
+    if type == 'unit':
+        die(call(libbuild.GOC + ' test -v ./pkg/...'))
+    elif type == 'e2e':
+        die(call('ginkgo -r --v --progress --trace -- --v=3'))
+    else:
+        print '{test unit|e2e}'
 
 
 if __name__ == "__main__":

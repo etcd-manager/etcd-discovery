@@ -1,10 +1,10 @@
 ## etcd-discovery
 
-Etcd Discovery by AppsCode
+etcd discovery server
 
 ### Synopsis
 
-Etcd Discovery by AppsCode
+etcd discovery server
 
 ### Options
 
@@ -22,6 +22,6 @@ Etcd Discovery by AppsCode
 
 ### SEE ALSO
 
-* [etcd-discovery run](etcd-discovery_run.md)	 - Run etcd discovery server
+* [etcd-discovery run](etcd-discovery_run.md)	 - Launch a etcd discovery server
 * [etcd-discovery version](etcd-discovery_version.md)	 - Prints binary version number.
 

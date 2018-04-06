@@ -32,5 +32,5 @@ etcd-discovery version [flags]
 
 ### SEE ALSO
 
-* [etcd-discovery](etcd-discovery.md)	 - Etcd Discovery by AppsCode
+* [etcd-discovery](etcd-discovery.md)	 - etcd discovery server
 
