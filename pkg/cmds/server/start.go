@@ -5,7 +5,7 @@ import (
 	"io"
 	"net"
 
-	"github.com/etcd-manager/etcd-discovery/pkg/controller"
+	"github.com/etcd-manager/etcd-discovery/pkg/manager"
 	"github.com/etcd-manager/etcd-discovery/pkg/server"
 	genericoptions "github.com/etcd-manager/etcd-discovery/pkg/server/options"
 	"github.com/spf13/pflag"
@@ -45,17 +45,21 @@ func (o *DiscoveryServerOptions) Complete() error {
 
 func (o DiscoveryServerOptions) Config() (*server.Config, error) {
 	// TODO have a "real" external address
-	ip, err := o.RecommendedOptions.SecureServing.DefaultExternalAddress()
-	if err != nil {
-		return nil, err
+	alternateIPs := []net.IP{
+		net.ParseIP("127.0.0.1"),
+		net.ParseIP("127.0.0.2"),
+		net.ParseIP("127.0.0.3"),
 	}
-	if err := o.RecommendedOptions.SecureServing.MaybeDefaultWithSelfSignedCerts("localhost", nil, []net.IP{net.ParseIP("127.0.0.1"), ip}); err != nil {
+	if ip, err := o.RecommendedOptions.SecureServing.DefaultExternalAddress(); err == nil {
+		alternateIPs = append(alternateIPs, ip)
+	}
+	if err := o.RecommendedOptions.SecureServing.MaybeDefaultWithSelfSignedCerts("localhost", nil, alternateIPs); err != nil {
 		return nil, fmt.Errorf("error creating self-signed certificates: %v", err)
 	}
 
 	config := &server.Config{
 		GenericConfig: genericapiserver.NewRecommendedConfig(server.Codecs),
-		EtcdConfig:    controller.NewEtcdConfig(),
+		EtcdConfig:    manager.NewEtcdConfig(),
 	}
 	if err := o.RecommendedOptions.ApplyTo(config); err != nil {
 		return nil, err

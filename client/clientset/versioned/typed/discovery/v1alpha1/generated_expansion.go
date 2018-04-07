@@ -15,6 +15,6 @@ limitations under the License.
 */
 package v1alpha1
 
-type JoinClusterExpansion interface{}
+type MemberExpansion interface{}
 
 type PingExpansion interface{}

@@ -4,8 +4,8 @@ import (
 	"github.com/etcd-manager/etcd-discovery/apis/discovery"
 	"github.com/etcd-manager/etcd-discovery/apis/discovery/install"
 	"github.com/etcd-manager/etcd-discovery/apis/discovery/v1alpha1"
-	"github.com/etcd-manager/etcd-discovery/pkg/controller"
-	jcstorage "github.com/etcd-manager/etcd-discovery/pkg/registry/discovery/joincluster"
+	"github.com/etcd-manager/etcd-discovery/pkg/manager"
+	memstorage "github.com/etcd-manager/etcd-discovery/pkg/registry/discovery/member"
 	pingstorage "github.com/etcd-manager/etcd-discovery/pkg/registry/discovery/ping"
 	"k8s.io/apimachinery/pkg/apimachinery/announced"
 	"k8s.io/apimachinery/pkg/apimachinery/registered"
@@ -45,13 +45,13 @@ func init() {
 
 type Config struct {
 	GenericConfig *genericapiserver.RecommendedConfig
-	EtcdConfig    *controller.EtcdConfig
+	EtcdConfig    *manager.EtcdConfig
 }
 
 // DiscoveryServer contains state for a Kubernetes cluster master/api server.
 type DiscoveryServer struct {
 	GenericAPIServer *genericapiserver.GenericAPIServer
-	Controller       *controller.EtcdController
+	Controller       *manager.EtcdManager
 }
 
 func (op *DiscoveryServer) Run(stopCh <-chan struct{}) error {
@@ -61,7 +61,7 @@ func (op *DiscoveryServer) Run(stopCh <-chan struct{}) error {
 
 type completedConfig struct {
 	GenericConfig genericapiserver.CompletedConfig
-	EtcdConfig    *controller.EtcdConfig
+	EtcdConfig    *manager.EtcdConfig
 }
 
 type CompletedConfig struct {
@@ -99,7 +99,7 @@ func (c completedConfig) New() (*DiscoveryServer, error) {
 	apiGroupInfo.GroupMeta.GroupVersion = v1alpha1.SchemeGroupVersion
 	v1alpha1storage := map[string]rest.Storage{}
 	v1alpha1storage[v1alpha1.ResourcePluralPing] = pingstorage.NewREST(c.EtcdConfig.ID, c.EtcdConfig.AdvertiseAddress)
-	v1alpha1storage[v1alpha1.ResourcePluralJoinCluster] = jcstorage.NewREST()
+	v1alpha1storage[v1alpha1.ResourcePluralMember] = memstorage.NewREST()
 	apiGroupInfo.VersionedResourcesStorageMap[v1alpha1.SchemeGroupVersion.Version] = v1alpha1storage
 
 	if err := s.GenericAPIServer.InstallAPIGroup(&apiGroupInfo); err != nil {

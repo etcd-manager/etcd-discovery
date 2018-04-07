@@ -35,7 +35,7 @@ func NewCmdConfigure() *cobra.Command {
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = prepareServerCerts(certDir, "server", addr)
+			err = prepareServerCerts(certDir, "db", addr)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -56,11 +56,21 @@ func prepareServerCerts(certDir, ca, addr string) error {
 	if err != nil {
 		return errors.Wrap(err, "failed to init ca.")
 	}
-	crt, key, err := store.NewServerCertPair(addr, cert.AltNames{})
+
+	crt, key, err := store.NewServerCertPair("server", cert.AltNames{})
 	if err != nil {
 		return err
 	}
-	return store.WriteBytes(addr, crt, key)
+	err = store.WriteBytes("server", crt, key)
+	if err != nil {
+		return err
+	}
+
+	crt, key, err = store.NewClientCertPair("discovery-client")
+	if err != nil {
+		return err
+	}
+	return store.WriteBytes("discovery-client", crt, key)
 }
 
 func preparePeerCerts(certDir, ca, addr string) error {

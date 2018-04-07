@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/etcd-manager/etcd-discovery/pkg/config"
-	"github.com/etcd-manager/etcd-discovery/pkg/controller"
 	"github.com/etcd-manager/etcd-discovery/pkg/etcd"
+	"github.com/etcd-manager/etcd-discovery/pkg/manager"
 	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
 )
@@ -56,7 +56,7 @@ func (s *EtcdOptions) Validate() []error {
 	return errors
 }
 
-func (s *EtcdOptions) ApplyTo(cfg *controller.EtcdConfig) error {
+func (s *EtcdOptions) ApplyTo(cfg *manager.EtcdConfig) error {
 	var err error
 
 	if err := os.MkdirAll(s.DataDir, 0755); err != nil {

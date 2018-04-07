@@ -24,7 +24,7 @@ import (
 
 type DiscoveryV1alpha1Interface interface {
 	RESTClient() rest.Interface
-	JoinClustersGetter
+	MembersGetter
 	PingsGetter
 }
 
@@ -33,8 +33,8 @@ type DiscoveryV1alpha1Client struct {
 	restClient rest.Interface
 }
 
-func (c *DiscoveryV1alpha1Client) JoinClusters() JoinClusterInterface {
-	return newJoinClusters(c)
+func (c *DiscoveryV1alpha1Client) Members() MemberInterface {
+	return newMembers(c)
 }
 
 func (c *DiscoveryV1alpha1Client) Pings() PingInterface {

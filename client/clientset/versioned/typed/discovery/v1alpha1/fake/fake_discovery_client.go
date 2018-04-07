@@ -25,8 +25,8 @@ type FakeDiscoveryV1alpha1 struct {
 	*testing.Fake
 }
 
-func (c *FakeDiscoveryV1alpha1) JoinClusters() v1alpha1.JoinClusterInterface {
-	return &FakeJoinClusters{c}
+func (c *FakeDiscoveryV1alpha1) Members() v1alpha1.MemberInterface {
+	return &FakeMembers{c}
 }
 
 func (c *FakeDiscoveryV1alpha1) Pings() v1alpha1.PingInterface {

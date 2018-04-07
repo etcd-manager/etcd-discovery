@@ -1,10 +1,10 @@
-hash: 38638746ac5c47446e3e95f64fdf36d6768127e2b636013becedb72996500023
-updated: 2018-04-07T01:13:48.051266944-07:00
+hash: 8695d7000056dee0aaeed1559a5d15020489818412201a31cbc91a009d53a324
+updated: 2018-04-07T22:53:39.60146012-07:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
 - name: github.com/appscode/go
-  version: eada76990be8b47b0dff2291fd64424f3a479c1d
+  version: 0397e11eff9cef0ff54f38ebb30467b2c11955e6
   subpackages:
   - analytics
   - context
@@ -18,7 +18,7 @@ imports:
 - name: github.com/appscode/jsonpatch
   version: 58a38a46ddb591a543c6b1003213353e29331c5a
 - name: github.com/appscode/kutil
-  version: 15c18f816dee0a8f1ebe255292cfe320d0046fd7
+  version: ddcd36b69e0ecb484abe64a6a9a99fd5099d9806
   subpackages:
   - meta
   - tools/analytics
@@ -185,11 +185,13 @@ imports:
 - name: github.com/PuerkitoBio/urlesc
   version: 5bd2802263f21d8788851d5305584c82a5c75d7e
 - name: github.com/russross/blackfriday
-  version: 4048872b16cc0fc2c5fd9eacf0ed2c2fedaa0c8c
+  version: 300106c228d52c8941d4b3de6054a6062a86dda3
 - name: github.com/sergi/go-diff
   version: 97b2266dfe4bd4ea1b81a463322f04f8b724801e
   subpackages:
   - diffmatchpatch
+- name: github.com/shurcooL/sanitized_anchor_name
+  version: 10ef21a441db47d8b13ebcc5fd2310f636973c77
 - name: github.com/spf13/afero
   version: 63644898a8da0bc22138abf860edaf5277b6102e
   subpackages:
@@ -590,4 +592,21 @@ imports:
   - pkg/handler
   - pkg/util
   - pkg/util/proto
+- name: k8s.io/kubernetes
+  version: 925c127ec6b946659ad0fd596fa959be43f0cc05
+  subpackages:
+  - cmd/kubeadm/app/apis/kubeadm
+  - pkg/apis/core
+  - pkg/apis/core/helper
+  - pkg/apis/core/v1/helper
+  - pkg/apis/core/v1/helper/qos
+  - pkg/kubelet/apis/kubeletconfig
+  - pkg/kubelet/apis/kubeletconfig/v1alpha1
+  - pkg/kubelet/qos
+  - pkg/kubelet/types
+  - pkg/master/ports
+  - pkg/proxy/apis/kubeproxyconfig
+  - pkg/proxy/apis/kubeproxyconfig/v1alpha1
+  - pkg/util/pointer
+  - pkg/util/version
 testImports: []

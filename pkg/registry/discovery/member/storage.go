@@ -1,4 +1,4 @@
-package joincluster
+package member
 
 import (
 	api "github.com/etcd-manager/etcd-discovery/apis/discovery/v1alpha1"
@@ -19,14 +19,14 @@ func NewREST() *REST {
 }
 
 func (r *REST) New() runtime.Object {
-	return &api.JoinCluster{}
+	return &api.Member{}
 }
 
 func (r *REST) GroupVersionKind(containingGV schema.GroupVersion) schema.GroupVersionKind {
-	return api.SchemeGroupVersion.WithKind(api.ResourceKindJoinCluster)
+	return api.SchemeGroupVersion.WithKind(api.ResourceKindMember)
 }
 
 func (r *REST) Create(ctx apirequest.Context, obj runtime.Object, _ rest.ValidateObjectFunc, _ bool) (runtime.Object, error) {
-	req := obj.(*api.JoinCluster)
+	req := obj.(*api.Member)
 	return req, nil
 }

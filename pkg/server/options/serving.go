@@ -45,6 +45,9 @@ type SecureServingOptions struct {
 
 	// ServerCert is the TLS cert info for serving secure client-to-server traffic
 	ServerCert GeneratableKeyCert
+
+	// ClientCert is the TLS client cert info for connecting to local etcd server
+	DiscoveryClientCert GeneratableKeyCert
 }
 
 type CertKey struct {
@@ -76,8 +79,11 @@ func NewSecureServingOptions() *SecureServingOptions {
 			ClientCertAuth: true,
 		},
 		ServerCert: GeneratableKeyCert{
-			PairName:       "server",
+			PairName:       "db",
 			ClientCertAuth: true,
+		},
+		DiscoveryClientCert: GeneratableKeyCert{
+			PairName: "discovery-client",
 		},
 	}
 }
@@ -94,7 +100,7 @@ func (s *SecureServingOptions) Validate() []error {
 	errors := []error{}
 
 	if s.BindPort < 0 || s.BindPort > 65535 {
-		errors = append(errors, fmt.Errorf("--secure-port %v must be between 0 and 65535, inclusive. 0 for turning off secure port.", s.BindPort))
+		errors = append(errors, fmt.Errorf("--secure-port %v must be between 0 and 65535, inclusive. 0 for turning off secure port", s.BindPort))
 	}
 
 	return errors
@@ -300,7 +306,7 @@ func (s *SecureServingOptions) MaybeDefaultWithSelfSignedCerts(publicAddress str
 	}
 
 	// server certs
-	err = s.generateServerCerts(publicAddress, sans)
+	err = s.generateDatabaseCerts(publicAddress, sans)
 	if err != nil {
 		return fmt.Errorf("unable to generate self signed server cert: %v", err)
 	} else {
@@ -334,7 +340,7 @@ func (s *SecureServingOptions) generatePeerCerts(host string, sans cert.AltNames
 	return nil
 }
 
-func (s *SecureServingOptions) generateServerCerts(host string, sans cert.AltNames) error {
+func (s *SecureServingOptions) generateDatabaseCerts(host string, sans cert.AltNames) error {
 	store, err := certstore.NewCertStore(afero.NewOsFs(), s.CertDirectory, organization)
 	if err != nil {
 		return errors.Wrap(err, "failed to create certificate store.")
@@ -343,18 +349,30 @@ func (s *SecureServingOptions) generateServerCerts(host string, sans cert.AltNam
 	if err != nil {
 		return errors.Wrap(err, "failed to init ca.")
 	}
+
 	crt, key, err := store.NewServerCertPair(host, sans)
 	if err != nil {
 		return err
 	}
-	err = store.WriteBytes(host, crt, key)
+	err = store.WriteBytes("server", crt, key)
 	if err != nil {
 		return err
 	}
-
 	s.ServerCert.CACertFile = store.CertFile(store.CAName())
-	s.ServerCert.CertKey.CertFile = store.CertFile(host)
-	s.ServerCert.CertKey.KeyFile = store.KeyFile(host)
+	s.ServerCert.CertKey.CertFile = store.CertFile("server")
+	s.ServerCert.CertKey.KeyFile = store.KeyFile("server")
+
+	crt, key, err = store.NewClientCertPair(s.DiscoveryClientCert.PairName)
+	if err != nil {
+		return err
+	}
+	err = store.WriteBytes(s.DiscoveryClientCert.PairName, crt, key)
+	if err != nil {
+		return err
+	}
+	s.DiscoveryClientCert.CertKey.CertFile = store.CertFile(s.DiscoveryClientCert.PairName)
+	s.DiscoveryClientCert.CertKey.KeyFile = store.KeyFile(s.DiscoveryClientCert.PairName)
+
 	return nil
 }
 

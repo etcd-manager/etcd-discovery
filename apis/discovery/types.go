@@ -24,7 +24,6 @@ type PeerInfo struct {
 }
 
 type PingRequest struct {
-	Info *PeerInfo
 }
 
 type PingResponse struct {
@@ -46,23 +45,15 @@ type Ping struct {
 	Response *PingResponse
 }
 
-type EtcdNode struct {
-	Name                  string
-	PeerURLs              []string
-	ClientURLs            []string
-	QuarantinedClientURLs []string
+type MemberRequest struct {
+	PeerURL string
 }
 
-type JoinClusterRequest struct {
-	LeadershipToken string
-	ClusterName     string
-	ClusterToken    string
-	Nodes           []*EtcdNode
-	AddNode         *EtcdNode
-	EtcdVersion     string
-}
-
-type JoinClusterResponse struct {
+type MemberResponse struct {
+	ClusterName  string
+	ClusterToken string
+	PeerURLs     []string
+	EtcdVersion  string
 }
 
 // +genclient
@@ -71,10 +62,10 @@ type JoinClusterResponse struct {
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type JoinCluster struct {
+type Member struct {
 	metav1.TypeMeta
 	// +optional
-	Request *JoinClusterRequest
+	Request *MemberRequest
 	// +optional
-	Response *JoinClusterResponse
+	Response *MemberResponse
 }

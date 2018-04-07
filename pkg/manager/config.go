@@ -1,4 +1,4 @@
-package controller
+package manager
 
 import (
 	"net"
@@ -8,22 +8,16 @@ import (
 )
 
 type EtcdConfig struct {
+	config.EtcdCluster
+
 	ID               api.PeerID
 	AdvertiseAddress net.IP
-
-	ClusterName     string
-	ClusterSize     int
-	BackupStorePath string
-	DataDir         string
-
-	InitialClusterState config.ClusterState
-	InitialCluster      map[string]string
 }
 
 func NewEtcdConfig() *EtcdConfig {
 	return &EtcdConfig{}
 }
 
-func (c *EtcdConfig) New() (*EtcdController, error) {
-	return &EtcdController{}, nil
+func (c *EtcdConfig) New() (*EtcdManager, error) {
+	return &EtcdManager{}, nil
 }

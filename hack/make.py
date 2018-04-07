@@ -93,6 +93,7 @@ def lint():
 
 def gen():
     die(call('go generate pkg/config/clusterstate.go'))
+    die(call('go generate pkg/etcd/processtype.go'))
 
 
 def build_cmd(name):

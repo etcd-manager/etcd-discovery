@@ -26,7 +26,6 @@ type PeerInfo struct {
 }
 
 type PingRequest struct {
-	Info *PeerInfo `json:"info,omitempty"`
 }
 
 type PingResponse struct {
@@ -55,28 +54,20 @@ type Ping struct {
 }
 
 const (
-	ResourceKindJoinCluster     = "JoinCluster"
-	ResourcePluralJoinCluster   = "joinclusters"
-	ResourceSingularJoinCluster = "joincluster"
+	ResourceKindMember     = "Member"
+	ResourcePluralMember   = "members"
+	ResourceSingularMember = "member"
 )
 
-type EtcdNode struct {
-	Name                  string   `json:"name,omitempty"`
-	PeerURLs              []string `json:"peerURLs,omitempty"`
-	ClientURLs            []string `json:"clientURLs,omitempty"`
-	QuarantinedClientURLs []string `json:"quarantinedClientURLs,omitempty"`
+type MemberRequest struct {
+	PeerURL string `json:"peerURL,omitempty"`
 }
 
-type JoinClusterRequest struct {
-	LeadershipToken string      `json:"leadershipToken,omitempty"`
-	ClusterName     string      `json:"clusterName,omitempty"`
-	ClusterToken    string      `json:"clusterToken,omitempty"`
-	Nodes           []*EtcdNode `json:"nodes,omitempty"`
-	AddNode         *EtcdNode   `json:"addNode,omitempty"`
-	EtcdVersion     string      `json:"etcdVersion,omitempty"`
-}
-
-type JoinClusterResponse struct {
+type MemberResponse struct {
+	ClusterName  string   `json:"clusterName,omitempty"`
+	ClusterToken string   `json:"clusterToken,omitempty"`
+	PeerURLs     []string `json:"peerURLs,omitempty"`
+	EtcdVersion  string   `json:"etcdVersion,omitempty"`
 }
 
 // +genclient
@@ -85,10 +76,10 @@ type JoinClusterResponse struct {
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
-type JoinCluster struct {
+type Member struct {
 	metav1.TypeMeta `json:",inline"`
 	// +optional
-	Request *JoinClusterRequest `json:"request,omitempty"`
+	Request *MemberRequest `json:"request,omitempty"`
 	// +optional
-	Response *JoinClusterResponse `json:"response,omitempty"`
+	Response *MemberResponse `json:"response,omitempty"`
 }

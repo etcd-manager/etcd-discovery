@@ -21,21 +21,21 @@ import (
 	testing "k8s.io/client-go/testing"
 )
 
-// FakeJoinClusters implements JoinClusterInterface
-type FakeJoinClusters struct {
+// FakeMembers implements MemberInterface
+type FakeMembers struct {
 	Fake *FakeDiscoveryV1alpha1
 }
 
-var joinclustersResource = schema.GroupVersionResource{Group: "discovery.etcd-manager.com", Version: "v1alpha1", Resource: "joinclusters"}
+var membersResource = schema.GroupVersionResource{Group: "discovery.etcd-manager.com", Version: "v1alpha1", Resource: "members"}
 
-var joinclustersKind = schema.GroupVersionKind{Group: "discovery.etcd-manager.com", Version: "v1alpha1", Kind: "JoinCluster"}
+var membersKind = schema.GroupVersionKind{Group: "discovery.etcd-manager.com", Version: "v1alpha1", Kind: "Member"}
 
-// Create takes the representation of a joinCluster and creates it.  Returns the server's representation of the joinCluster, and an error, if there is any.
-func (c *FakeJoinClusters) Create(joinCluster *v1alpha1.JoinCluster) (result *v1alpha1.JoinCluster, err error) {
+// Create takes the representation of a member and creates it.  Returns the server's representation of the member, and an error, if there is any.
+func (c *FakeMembers) Create(member *v1alpha1.Member) (result *v1alpha1.Member, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewRootCreateAction(joinclustersResource, joinCluster), &v1alpha1.JoinCluster{})
+		Invokes(testing.NewRootCreateAction(membersResource, member), &v1alpha1.Member{})
 	if obj == nil {
 		return nil, err
 	}
-	return obj.(*v1alpha1.JoinCluster), err
+	return obj.(*v1alpha1.Member), err
 }
