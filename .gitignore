@@ -33,4 +33,4 @@ dist/
 .idea/
 **/node_modules/
 .vscode/
-apiserver.local.config/
+etcd.local.config/

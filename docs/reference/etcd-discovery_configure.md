@@ -1,17 +1,28 @@
-## etcd-discovery
+## etcd-discovery configure
 
-etcd discovery server
+Configure certs for etcd-discovery
 
 ### Synopsis
 
-etcd discovery server
+Configure certs for etcd-discovery
+
+```
+etcd-discovery configure [flags]
+```
 
 ### Options
 
 ```
+      --addr string       Address of server ip (default "127.0.0.1")
+      --cert-dir string   Path to directory where pki files are stored. (default "/home/tamal/go/src/github.com/etcd-manager/etcd-discovery/hack/gendocs")
+  -h, --help              help for configure
+```
+
+### Options inherited from parent commands
+
+```
       --alsologtostderr                  log to standard error as well as files
       --enable-analytics                 Send usage events to Google Analytics (default true)
-  -h, --help                             help for etcd-discovery
       --log_backtrace_at traceLocation   when logging hits line file:N, emit a stack trace (default :0)
       --log_dir string                   If non-empty, write log files in this directory
       --logtostderr                      log to standard error instead of files
@@ -22,7 +33,5 @@ etcd discovery server
 
 ### SEE ALSO
 
-* [etcd-discovery configure](etcd-discovery_configure.md)	 - Configure certs for etcd-discovery
-* [etcd-discovery run](etcd-discovery_run.md)	 - Launch a etcd discovery server
-* [etcd-discovery version](etcd-discovery_version.md)	 - Prints binary version number.
+* [etcd-discovery](etcd-discovery.md)	 - etcd discovery server
 

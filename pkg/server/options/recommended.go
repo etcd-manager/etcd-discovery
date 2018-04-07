@@ -10,27 +10,24 @@ import (
 // If you add something to this list, it should be in a logical grouping.
 // Each of them can be nil to leave the feature unconfigured on ApplyTo.
 type RecommendedOptions struct {
-	Etcd           *EtcdOptions
-	SecureServing  *genericoptions.SecureServingOptions
-	Authentication *DelegatingAuthenticationOptions
-	Audit          *genericoptions.AuditOptions
-	Features       *genericoptions.FeatureOptions
+	Etcd          *EtcdOptions
+	SecureServing *SecureServingOptions
+	Audit         *genericoptions.AuditOptions
+	Features      *genericoptions.FeatureOptions
 }
 
 func NewRecommendedOptions() *RecommendedOptions {
 	return &RecommendedOptions{
-		Etcd:           NewEtcdOptions(),
-		SecureServing:  genericoptions.NewSecureServingOptions(),
-		Authentication: NewDelegatingAuthenticationOptions(),
-		Audit:          genericoptions.NewAuditOptions(),
-		Features:       genericoptions.NewFeatureOptions(),
+		Etcd:          NewEtcdOptions(),
+		SecureServing: NewSecureServingOptions(),
+		Audit:         genericoptions.NewAuditOptions(),
+		Features:      genericoptions.NewFeatureOptions(),
 	}
 }
 
 func (o *RecommendedOptions) AddFlags(fs *pflag.FlagSet) {
 	o.Etcd.AddFlags(fs)
 	o.SecureServing.AddFlags(fs)
-	o.Authentication.AddFlags(fs)
 	o.Audit.AddFlags(fs)
 	o.Features.AddFlags(fs)
 }
@@ -40,9 +37,6 @@ func (o *RecommendedOptions) ApplyTo(config *server.Config) error {
 		return err
 	}
 	if err := o.SecureServing.ApplyTo(&config.GenericConfig.Config); err != nil {
-		return err
-	}
-	if err := o.Authentication.ApplyTo(&config.GenericConfig.Config); err != nil {
 		return err
 	}
 	if err := o.Audit.ApplyTo(&config.GenericConfig.Config); err != nil {
@@ -57,7 +51,6 @@ func (o *RecommendedOptions) ApplyTo(config *server.Config) error {
 func (o *RecommendedOptions) Validate() []error {
 	var errors []error
 	errors = append(errors, o.SecureServing.Validate()...)
-	errors = append(errors, o.Authentication.Validate()...)
 	errors = append(errors, o.Audit.Validate()...)
 	errors = append(errors, o.Features.Validate()...)
 	return errors

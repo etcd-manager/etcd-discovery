@@ -70,10 +70,5 @@ func (o DiscoveryServerOptions) Run(stopCh <-chan struct{}) error {
 		return err
 	}
 
-	srv.GenericAPIServer.AddPostStartHook("start-etcd-discovery-server-informers", func(context genericapiserver.PostStartHookContext) error {
-		config.GenericConfig.SharedInformerFactory.Start(context.StopCh)
-		return nil
-	})
-
 	return srv.GenericAPIServer.PrepareRun().Run(stopCh)
 }
