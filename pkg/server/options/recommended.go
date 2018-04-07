@@ -60,6 +60,5 @@ func (o *RecommendedOptions) Validate() []error {
 	errors = append(errors, o.Authentication.Validate()...)
 	errors = append(errors, o.Audit.Validate()...)
 	errors = append(errors, o.Features.Validate()...)
-
 	return errors
 }

@@ -1,22 +1,28 @@
-hash: 6b96b338d6f82cec760cf4c0420e9b65c39f2cb8eea6ed223a94b82683107c27
-updated: 2018-04-05T19:39:00.978420734-07:00
+hash: 38638746ac5c47446e3e95f64fdf36d6768127e2b636013becedb72996500023
+updated: 2018-04-07T01:13:48.051266944-07:00
 imports:
 - name: bitbucket.org/ww/goautoneg
   version: 75cd24fc2f2c2a2088577d12123ddee5f54e0675
 - name: github.com/appscode/go
-  version: f8f2e1c7d2d10789cdd0540468b487d14421dbf9
+  version: eada76990be8b47b0dff2291fd64424f3a479c1d
   subpackages:
   - analytics
+  - context
   - homedir
+  - ioutil
+  - log
+  - net
   - runtime
+  - sets
   - version
 - name: github.com/appscode/jsonpatch
   version: 58a38a46ddb591a543c6b1003213353e29331c5a
 - name: github.com/appscode/kutil
-  version: 750f373de2f853058e2e75a112a3f102410743dc
+  version: 15c18f816dee0a8f1ebe255292cfe320d0046fd7
   subpackages:
   - meta
   - tools/analytics
+  - tools/certstore
 - name: github.com/beorn7/perks
   version: 3ac7bf7a47d159a033b107610db8a1b6575507a4
   subpackages:
@@ -63,6 +69,8 @@ imports:
   version: dcef7f55730566d41eae5db10e7d6981829720f6
 - name: github.com/evanphx/json-patch
   version: 944e07253867aacae43c04b2e6a239005443f33a
+- name: github.com/fsnotify/fsnotify
+  version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 - name: github.com/ghodss/yaml
   version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
 - name: github.com/go-openapi/jsonpointer
@@ -182,6 +190,10 @@ imports:
   version: 97b2266dfe4bd4ea1b81a463322f04f8b724801e
   subpackages:
   - diffmatchpatch
+- name: github.com/spf13/afero
+  version: 63644898a8da0bc22138abf860edaf5277b6102e
+  subpackages:
+  - mem
 - name: github.com/spf13/cobra
   version: 4dab30cb33e6633c33c787106bafbfbfdde7842d
   subpackages:

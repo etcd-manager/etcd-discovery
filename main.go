@@ -20,6 +20,5 @@ func main() {
 	if err := cmds.NewRootCmd().Execute(); err != nil {
 		glog.Fatalln("Error in etcd-discovery:", err)
 	}
-	glog.Infoln("Exiting etcd-discovery")
 	os.Exit(0)
 }

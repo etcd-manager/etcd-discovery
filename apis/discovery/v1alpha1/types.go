@@ -18,6 +18,8 @@ package v1alpha1
 
 import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+type PeerId string
+
 type PeerInfo struct {
 	ID        string   `json:"id,omitempty"`
 	Addresses []string `json:"addresses,omitempty"`
