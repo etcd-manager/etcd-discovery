@@ -2,7 +2,6 @@ package cmds
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/appscode/go/log"
 	"github.com/appscode/go/net"
@@ -11,19 +10,15 @@ import (
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"k8s.io/client-go/util/cert"
-	"k8s.io/client-go/util/homedir"
 )
 
 const organization = "system:etcd"
 
 func NewCmdConfigure() *cobra.Command {
 	var (
-		certDir = homedir.HomeDir()
+		certDir = "etcd.local.config/certificates"
 		addr    = "127.0.0.1"
 	)
-	if d, err := os.Getwd(); err == nil {
-		certDir = d
-	}
 	cmd := &cobra.Command{
 		Use:               "configure",
 		Short:             "Configure certs for etcd-discovery",
