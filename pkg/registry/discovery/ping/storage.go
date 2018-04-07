@@ -9,13 +9,15 @@ import (
 )
 
 type REST struct {
+	id   api.PeerID
+	host string
 }
 
 var _ rest.Creater = &REST{}
 var _ rest.GroupVersionKindProvider = &REST{}
 
-func NewREST() *REST {
-	return &REST{}
+func NewREST(id api.PeerID, host string) *REST {
+	return &REST{id, host}
 }
 
 func (r *REST) New() runtime.Object {
@@ -28,5 +30,12 @@ func (r *REST) GroupVersionKind(containingGV schema.GroupVersion) schema.GroupVe
 
 func (r *REST) Create(ctx apirequest.Context, obj runtime.Object, _ rest.ValidateObjectFunc, _ bool) (runtime.Object, error) {
 	req := obj.(*api.Ping)
+
+	req.Response = &api.PingResponse{
+		Info: &api.PeerInfo{
+			ID:    string(r.id),
+			Hosts: []string{r.host},
+		},
+	}
 	return req, nil
 }

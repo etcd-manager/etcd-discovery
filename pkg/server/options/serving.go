@@ -62,6 +62,8 @@ type GeneratableKeyCert struct {
 	// PairName is the name which will be used with CertDirectory to make a cert and key names
 	// It becomes CertDirector/PairName.crt and CertDirector/PairName.key
 	PairName string
+
+	ClientCertAuth bool
 }
 
 func NewSecureServingOptions() *SecureServingOptions {
@@ -70,10 +72,12 @@ func NewSecureServingOptions() *SecureServingOptions {
 		BindPort:      443,
 		CertDirectory: "etcd.local.config/certificates",
 		PeerCert: GeneratableKeyCert{
-			PairName: "peer",
+			PairName:       "peer",
+			ClientCertAuth: true,
 		},
 		ServerCert: GeneratableKeyCert{
-			PairName: "server",
+			PairName:       "server",
+			ClientCertAuth: true,
 		},
 	}
 }
@@ -128,6 +132,10 @@ func (s *SecureServingOptions) AddFlags(fs *pflag.FlagSet) {
 		"File containing the certificate authority will used for secure access from peer etcd servers. "+
 		"This must be a valid PEM-encoded CA bundle.")
 
+	fs.BoolVar(&s.PeerCert.ClientCertAuth, "peer-client-cert-auth", s.PeerCert.ClientCertAuth, ""+
+		"When set, etcd will check all incoming peer requests from the cluster for valid client certificates "+
+		"signed by the --peer-trusted-ca-file.")
+
 	fs.StringVar(&s.ServerCert.CertKey.CertFile, "cert-file", s.ServerCert.CertKey.CertFile, ""+
 		"File containing the default x509 Certificate used for SSL/TLS connections to etcd. When this "+
 		"option is set, advertise-client-urls can use the HTTPS schema. If HTTPS serving is enabled, "+
@@ -140,6 +148,12 @@ func (s *SecureServingOptions) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&s.ServerCert.CACertFile, "trusted-ca-file", s.ServerCert.CACertFile, ""+
 		"File containing the certificate authority will used for secure client-to-server communication. "+
 		"This must be a valid PEM-encoded CA bundle.")
+
+	fs.BoolVar(&s.ServerCert.ClientCertAuth, "client-cert-auth", s.ServerCert.ClientCertAuth, ""+
+		"When this is set etcd will check all incoming HTTPS requests for a client certificate signed "+
+		"by the --trusted-ca-file, requests that don't supply a valid client certificate will fail. "+
+		"If authentication is enabled, the certificate provides credentials for the user name given by "+
+		"the Common Name field.")
 }
 
 // ApplyTo fills up serving information in the server configuration.
@@ -346,7 +360,7 @@ func (s *SecureServingOptions) generateServerCerts(host string, sans cert.AltNam
 
 func (s *SecureServingOptions) ToAuthenticationConfig() (authenticatorfactory.DelegatingAuthenticatorConfig, error) {
 	ret := authenticatorfactory.DelegatingAuthenticatorConfig{
-		Anonymous:    false,
+		Anonymous:    !s.PeerCert.ClientCertAuth,
 		CacheTTL:     0,
 		ClientCAFile: s.PeerCert.CACertFile,
 	}

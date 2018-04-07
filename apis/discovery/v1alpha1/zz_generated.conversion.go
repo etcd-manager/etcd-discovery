@@ -153,7 +153,7 @@ func Convert_discovery_JoinClusterResponse_To_v1alpha1_JoinClusterResponse(in *d
 
 func autoConvert_v1alpha1_PeerInfo_To_discovery_PeerInfo(in *PeerInfo, out *discovery.PeerInfo, s conversion.Scope) error {
 	out.ID = in.ID
-	out.Addresses = *(*[]string)(unsafe.Pointer(&in.Addresses))
+	out.Hosts = *(*[]string)(unsafe.Pointer(&in.Hosts))
 	return nil
 }
 
@@ -164,7 +164,7 @@ func Convert_v1alpha1_PeerInfo_To_discovery_PeerInfo(in *PeerInfo, out *discover
 
 func autoConvert_discovery_PeerInfo_To_v1alpha1_PeerInfo(in *discovery.PeerInfo, out *PeerInfo, s conversion.Scope) error {
 	out.ID = in.ID
-	out.Addresses = *(*[]string)(unsafe.Pointer(&in.Addresses))
+	out.Hosts = *(*[]string)(unsafe.Pointer(&in.Hosts))
 	return nil
 }
 

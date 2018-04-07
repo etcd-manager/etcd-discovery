@@ -2,9 +2,12 @@ package options
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/etcd-manager/etcd-discovery/pkg/config"
 	"github.com/etcd-manager/etcd-discovery/pkg/controller"
+	"github.com/etcd-manager/etcd-discovery/pkg/etcd"
+	"github.com/pkg/errors"
 	"github.com/spf13/pflag"
 )
 
@@ -20,6 +23,7 @@ type EtcdOptions struct {
 
 func NewEtcdOptions() *EtcdOptions {
 	opts := &EtcdOptions{
+		DataDir:             "etcd.local.config/data",
 		InitialClusterState: config.ClusterStateNew,
 	}
 	return opts
@@ -54,6 +58,25 @@ func (s *EtcdOptions) Validate() []error {
 
 func (s *EtcdOptions) ApplyTo(cfg *controller.EtcdConfig) error {
 	var err error
+
+	if err := os.MkdirAll(s.DataDir, 0755); err != nil {
+		return errors.Wrapf(err, "error doing mkdirs on base directory %s", s.DataDir)
+	}
+
+	peerID, err := etcd.PersistentPeerID(s.DataDir)
+	if err != nil {
+		return errors.Wrap(err, "error getting persistent peer id")
+	}
+	cfg.ID = peerID
+	cfg.ClusterName = s.ClusterName
+	cfg.ClusterSize = s.ClusterSize
+	cfg.BackupStorePath = s.BackupStorePath
+	cfg.DataDir = s.DataDir
+	cfg.InitialClusterState = s.InitialClusterState
+	cfg.InitialCluster = map[string]string{}
+	for k, v := range s.InitialCluster {
+		cfg.InitialCluster[k] = v
+	}
 
 	return err
 }

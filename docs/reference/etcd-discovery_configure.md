@@ -14,7 +14,7 @@ etcd-discovery configure [flags]
 
 ```
       --addr string       Address of server ip (default "127.0.0.1")
-      --cert-dir string   Path to directory where pki files are stored. (default "/home/tamal/go/src/github.com/etcd-manager/etcd-discovery/hack/gendocs")
+      --cert-dir string   Path to directory where pki files are stored. (default "etcd.local.config/certificates")
   -h, --help              help for configure
 ```
 

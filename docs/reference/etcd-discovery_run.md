@@ -30,16 +30,18 @@ etcd-discovery run [flags]
       --bind-address ip                                The IP address on which to listen for the --secure-port port. The associated interface(s) must be reachable by the rest of the cluster, and by CLI/web clients. If blank, all interfaces will be used (0.0.0.0). (default 0.0.0.0)
       --cert-dir string                                The directory where the TLS certs are located. If --peer-cert-file and --peer-private-key-file are provided, this flag will be ignored. (default "etcd.local.config/certificates")
       --cert-file string                               File containing the default x509 Certificate used for SSL/TLS connections to etcd. When this option is set, advertise-client-urls can use the HTTPS schema. If HTTPS serving is enabled, and --cert-file and --private-key-file are not provided, a self-signed certificate and key are generated for the public address and saved to the directory specified by --cert-dir.
+      --client-cert-auth                               When this is set etcd will check all incoming HTTPS requests for a client certificate signed by the --trusted-ca-file, requests that don't supply a valid client certificate will fail. If authentication is enabled, the certificate provides credentials for the user name given by the Common Name field. (default true)
       --contention-profiling                           Enable lock contention profiling, if profiling is enabled
       --enable-swagger-ui                              Enables swagger ui on the apiserver at /swagger-ui
       --etcd-backup-store string                       Backup store location
       --etcd-cluster-name string                       Name of cluster
       --etcd-cluster-size int                          Size of cluster size
-      --etcd-data-dir string                           Directory for storing etcd data
+      --etcd-data-dir string                           Directory for storing etcd data (default "etcd.local.config/data")
   -h, --help                                           help for run
       --initial-cluster stringToString                 Initial cluster configuration (default [])
       --initial-cluster-state ClusterState             Initial cluster state (default New)
       --peer-cert-file string                          File containing the default x509 Certificate used for SSL/TLS connections between peers. This will be used both for listening on the peer address as well as sending requests to other peers. If HTTPS serving is enabled, and --peer-cert-file and --peer-private-key-file are not provided, a self-signed certificate and key are generated for the public address and saved to the directory specified by --cert-dir.
+      --peer-client-cert-auth                          When set, etcd will check all incoming peer requests from the cluster for valid client certificates signed by the --peer-trusted-ca-file. (default true)
       --peer-private-key-file string                   File containing the default x509 private key matching --peer-cert-file.
       --peer-trusted-ca-file string                    File containing the certificate authority will used for secure access from peer etcd servers. This must be a valid PEM-encoded CA bundle.
       --private-key-file string                        File containing the default x509 private key matching --cert-file.

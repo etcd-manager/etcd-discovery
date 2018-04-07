@@ -45,7 +45,7 @@ func init() {
 
 type Config struct {
 	GenericConfig *genericapiserver.RecommendedConfig
-	ExtraConfig   *controller.EtcdConfig
+	EtcdConfig    *controller.EtcdConfig
 }
 
 // DiscoveryServer contains state for a Kubernetes cluster master/api server.
@@ -61,7 +61,7 @@ func (op *DiscoveryServer) Run(stopCh <-chan struct{}) error {
 
 type completedConfig struct {
 	GenericConfig genericapiserver.CompletedConfig
-	ExtraConfig   *controller.EtcdConfig
+	EtcdConfig    *controller.EtcdConfig
 }
 
 type CompletedConfig struct {
@@ -73,7 +73,7 @@ type CompletedConfig struct {
 func (cfg *Config) Complete() CompletedConfig {
 	c := completedConfig{
 		cfg.GenericConfig.Complete(),
-		cfg.ExtraConfig,
+		cfg.EtcdConfig,
 	}
 
 	c.GenericConfig.Version = &version.Info{
@@ -98,7 +98,7 @@ func (c completedConfig) New() (*DiscoveryServer, error) {
 	apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(discovery.GroupName, registry, Scheme, metav1.ParameterCodec, Codecs)
 	apiGroupInfo.GroupMeta.GroupVersion = v1alpha1.SchemeGroupVersion
 	v1alpha1storage := map[string]rest.Storage{}
-	v1alpha1storage[v1alpha1.ResourcePluralPing] = pingstorage.NewREST()
+	v1alpha1storage[v1alpha1.ResourcePluralPing] = pingstorage.NewREST(c.EtcdConfig.ID, c.GenericConfig.ExternalAddress)
 	v1alpha1storage[v1alpha1.ResourcePluralJoinCluster] = jcstorage.NewREST()
 	apiGroupInfo.VersionedResourcesStorageMap[v1alpha1.SchemeGroupVersion.Version] = v1alpha1storage
 

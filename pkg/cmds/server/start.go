@@ -51,7 +51,7 @@ func (o DiscoveryServerOptions) Config() (*server.Config, error) {
 
 	config := &server.Config{
 		GenericConfig: genericapiserver.NewRecommendedConfig(server.Codecs),
-		ExtraConfig:   &controller.EtcdConfig{},
+		EtcdConfig:    controller.NewEtcdConfig(),
 	}
 	if err := o.RecommendedOptions.ApplyTo(config); err != nil {
 		return nil, err

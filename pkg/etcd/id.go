@@ -15,8 +15,8 @@ import (
 	"github.com/golang/glog"
 )
 
-// PersistentPeerId reads the id from the base directory, creating and saving it if it does not exists
-func PersistentPeerId(basedir string) (api.PeerId, error) {
+// PersistentPeerID reads the id from the base directory, creating and saving it if it does not exists
+func PersistentPeerID(basedir string) (api.PeerID, error) {
 	idFile := filepath.Join(basedir, "myid")
 
 	b, err := ioutil.ReadFile(idFile)
@@ -32,7 +32,7 @@ func PersistentPeerId(basedir string) (api.PeerId, error) {
 		}
 	}
 
-	uniqueID := api.PeerId(string(b))
+	uniqueID := api.PeerID(string(b))
 	return uniqueID, nil
 }
 

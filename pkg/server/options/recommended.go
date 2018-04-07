@@ -33,7 +33,7 @@ func (o *RecommendedOptions) AddFlags(fs *pflag.FlagSet) {
 }
 
 func (o *RecommendedOptions) ApplyTo(config *server.Config) error {
-	if err := o.Etcd.ApplyTo(config.ExtraConfig); err != nil {
+	if err := o.Etcd.ApplyTo(config.EtcdConfig); err != nil {
 		return err
 	}
 	if err := o.SecureServing.ApplyTo(&config.GenericConfig.Config); err != nil {
