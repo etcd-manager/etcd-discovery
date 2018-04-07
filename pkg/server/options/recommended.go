@@ -36,6 +36,11 @@ func (o *RecommendedOptions) ApplyTo(config *server.Config) error {
 	if err := o.Etcd.ApplyTo(config.EtcdConfig); err != nil {
 		return err
 	}
+	var err error
+	config.EtcdConfig.AdvertiseAddress, err = o.SecureServing.DefaultExternalAddress()
+	if err != nil {
+		return err
+	}
 	if err := o.SecureServing.ApplyTo(&config.GenericConfig.Config); err != nil {
 		return err
 	}

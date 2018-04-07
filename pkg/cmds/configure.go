@@ -31,11 +31,11 @@ func NewCmdConfigure() *cobra.Command {
 			fmt.Println("extenal-ips:", externalIPs)
 			fmt.Println("internal-ips:", internalIPs)
 
-			err = prepareServerCerts(certDir, "client", addr)
+			err = preparePeerCerts(certDir, "peer", addr)
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = preparePeerCerts(certDir, "peer", addr)
+			err = prepareServerCerts(certDir, "server", addr)
 			if err != nil {
 				log.Fatal(err)
 			}

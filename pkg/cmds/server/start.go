@@ -45,7 +45,11 @@ func (o *DiscoveryServerOptions) Complete() error {
 
 func (o DiscoveryServerOptions) Config() (*server.Config, error) {
 	// TODO have a "real" external address
-	if err := o.RecommendedOptions.SecureServing.MaybeDefaultWithSelfSignedCerts("localhost", nil, []net.IP{net.ParseIP("127.0.0.1")}); err != nil {
+	ip, err := o.RecommendedOptions.SecureServing.DefaultExternalAddress()
+	if err != nil {
+		return nil, err
+	}
+	if err := o.RecommendedOptions.SecureServing.MaybeDefaultWithSelfSignedCerts("localhost", nil, []net.IP{net.ParseIP("127.0.0.1"), ip}); err != nil {
 		return nil, fmt.Errorf("error creating self-signed certificates: %v", err)
 	}
 

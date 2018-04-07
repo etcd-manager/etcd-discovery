@@ -1,12 +1,15 @@
 package controller
 
 import (
+	"net"
+
 	api "github.com/etcd-manager/etcd-discovery/apis/discovery/v1alpha1"
 	"github.com/etcd-manager/etcd-discovery/pkg/config"
 )
 
 type EtcdConfig struct {
-	ID api.PeerID
+	ID               api.PeerID
+	AdvertiseAddress net.IP
 
 	ClusterName     string
 	ClusterSize     int

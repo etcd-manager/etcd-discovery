@@ -98,7 +98,7 @@ func (c completedConfig) New() (*DiscoveryServer, error) {
 	apiGroupInfo := genericapiserver.NewDefaultAPIGroupInfo(discovery.GroupName, registry, Scheme, metav1.ParameterCodec, Codecs)
 	apiGroupInfo.GroupMeta.GroupVersion = v1alpha1.SchemeGroupVersion
 	v1alpha1storage := map[string]rest.Storage{}
-	v1alpha1storage[v1alpha1.ResourcePluralPing] = pingstorage.NewREST(c.EtcdConfig.ID, c.GenericConfig.ExternalAddress)
+	v1alpha1storage[v1alpha1.ResourcePluralPing] = pingstorage.NewREST(c.EtcdConfig.ID, c.EtcdConfig.AdvertiseAddress)
 	v1alpha1storage[v1alpha1.ResourcePluralJoinCluster] = jcstorage.NewREST()
 	apiGroupInfo.VersionedResourcesStorageMap[v1alpha1.SchemeGroupVersion.Version] = v1alpha1storage
 
