@@ -1,0 +1,2 @@
+apiVersion: discovery.etcd-manager.com/v1alpha1
+kind: Ping
